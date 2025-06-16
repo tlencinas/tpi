@@ -45,7 +45,7 @@ let arr_CategoriasMock = [
     }
 ];
 
-// Get general, trae todos los objetos.
+// Get general, trae todos los objetos y filtra por query.
 
 router.get('/api/categoriasmock', async function (req, res){
     const {nombre} = req.query;
@@ -67,7 +67,7 @@ router.get('/api/categoriasmock/:id', async function (req, res) {
         (x) => x.IdCategoria === parseInt(req.params.id)
     );
     if (categoria) res.json(categoria);
-    else res.status(404).json({ message: 'categoria no encontrado' });
+    else res.status(404).json({ message: 'categoria no encontrada' });
 });
 
 // Post con body
