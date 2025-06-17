@@ -162,10 +162,10 @@ router.delete("/api/articulos/:id", async (req, res) => {
         let filasBorradas = await Articulo.destroy({
             where: { IdArticulo: req.params.id },
         });
-        if (filasBorradas == 1) res.sendStatus(200);
+        if (filasBorradas === 1) res.sendStatus(200);
         else res.sendStatus(404);
     } else {
-        // baja lógica, si esta activo lo desactiva y viceversa
+        // baja lógica, si está activo lo desactiva y viceversa
         try {
             let data = await Articulo.sequelize.query(
                 "UPDATE articulos SET Activo = case when Activo = 1 then 0 else 1 end WHERE IdArticulo = :IdArticulo",
