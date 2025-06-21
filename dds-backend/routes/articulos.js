@@ -72,7 +72,7 @@ router.post("/api/articulos/", async (req, res) => {
             FechaAlta: req.body.FechaAlta,
             Activo: req.body.Activo,
         });
-        res.status(200).json(item.dataValues); // devolvemos el registro agregado!
+        res.status(201).json(item.dataValues); // devolvemos el registro agregado!
     } catch (err) {
         if (err instanceof ValidationError) {
             // si son errores de validación, los devolvemos
@@ -136,7 +136,7 @@ router.put("/api/articulos/:id", async (req, res) => {
         //   },
         //   { where: { IdArticulo: req.params.id } }
         // );
-        res.sendStatus(204);
+        res.sendStatus(200);
     } catch (err) {
         if (err instanceof ValidationError) {
             // si son errores de validación, los devolvemos
