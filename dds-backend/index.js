@@ -6,20 +6,33 @@ import articulos from "./routes/articulos.js";
 import cors from 'cors';
 import seguridadRouter from './routes/seguridad.js';
 import usuariosRouter from './routes/usuarios.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import isAliveRouter from './routes/isalive.js';
 
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(express.json()); // para poder leer json en el body
 
 app.use(categoriasMock);
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('Backend inicial dds-backend!');
 });
 
 app.use(categorias);
 
 app.use(articulos);
+
+app.use(seguridadRouter);
+
+app.use(usuariosRouter);
+
+app.use(isAliveRouter);
 
 app.use(
     cors({
@@ -27,11 +40,15 @@ app.use(
     })
 );
 
-app.use(seguridadRouter);
-app.use(usuariosRouter);
-
-await inicializarBase();
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Listening on ${PORT}`);
+app.use((req, res) => {
+  res.status(404).send("No encontrada!");
 });
+
+if (import.meta.url === `file://${__filename}`) {
+    await inicializarBase();
+    app.listen(PORT, () => {
+        console.log(`Listening on ${PORT}`);
+    });
+}
+
+export default app;

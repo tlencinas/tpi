@@ -4,7 +4,7 @@
   "description": "backend with express",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "dev": "node --watch ./index.js"
   },
   "type": "module",
@@ -16,5 +16,10 @@
     "jsonwebtoken": "^9.0.2",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "jest": "^30.0.2",
+    "supertest": "^7.1.1"
   }
 }
