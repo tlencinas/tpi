@@ -36,7 +36,7 @@ app.use(isAliveRouter);
 
 app.use(
     cors({
-        origin: "*"
+        origin: "http://localhost:5173"
     })
 );
 

@@ -3,7 +3,9 @@ import moment from "moment";
 import ArticulosBuscar from "./ArticulosBuscar";
 import ArticulosListado from "./ArticulosListado";
 import ArticulosRegistro from "./ArticulosRegistro";
-import { categoriasMockService as categoriasService } from "../../services/categorias-mock.service";
+import categoriasService from "../../services/categorias.service";
+import articulosService from "../../services/articulos.service";
+
 
 function Articulos() {
   const TituloAccionABMC = {
@@ -35,46 +37,37 @@ function Articulos() {
     BuscarCategorias();
   }, []);
 
-async function Buscar() {
-    setAccionABMC("L");
-    // harcodeamos 2 articulos para probar
-    setItems([
-      {
-        IdArticulo: 108,
-        Nombre: "ADAPTADOR USB WIFI TL-WN722N",
-        Precio: 219.0,
-        CodigoDeBarra: "0693536405046",
-        IdCategoria: 9,
-        Stock: 898,
-        FechaAlta: "2017-01-23T00:00:00",
-        Activo: false,
-      },
-      {
-        IdArticulo: 139,
-        Nombre: "AIRE ACONDICIONADO DAEWOO 3200FC DWT23200FC",
-        Precio: 5899.0,
-        CodigoDeBarra: "0779816944014",
-        IdCategoria: 7,
-        Stock: 668,
-        FechaAlta: "2017-01-04T00:00:00",
-        Activo: true,
-      },
-    ]);
-    setRegistrosTotal(2);
-    setPaginas([1]);
-    alert("Buscando...");
+
+async function Buscar(_pagina) {
+    if (_pagina && _pagina !== Pagina) {
+      setPagina(_pagina);
+    }
+    // OJO Pagina (y cualquier estado...) se actualiza para el proximo render, 
+    // para buscar usamos el parametro _pagina
+    else {
+      _pagina = Pagina;
+    }
+
+    const data = await articulosService.Buscar(Nombre, Activo, _pagina);
+    setItems(data.Items);
+    setRegistrosTotal(data.RegistrosTotal);
+
+    //generar array de las páginas para mostrar en select del paginador
+    const arrPaginas = [];
+    for (let i = 1; i <= Math.ceil(data.RegistrosTotal / 10); i++) {
+      arrPaginas.push(i);
+    }
+    setPaginas(arrPaginas);
   }
 
+  
+
   async function BuscarPorId(item, accionABMC) {
+    const data = await articulosService.BuscarPorId(item);
+    setItem(data);
     setAccionABMC(accionABMC);
-    setItem(item);
-    if (accionABMC === "C") {
-      alert("Consultando...");
-    }
-    if (accionABMC === "M") {
-      alert("Preparando la Modificacion...");
-    }
-  }
+}
+
 
   function Consultar(item) {
     BuscarPorId(item, "C"); // paso la accionABMC pq es asincrono la busqueda y luego de ejecutarse quiero cambiar el estado accionABMC
@@ -87,7 +80,7 @@ async function Buscar() {
     BuscarPorId(item, "M"); // paso la accionABMC pq es asincrono la busqueda y luego de ejecutarse quiero cambiar el estado accionABMC
   }
 
-  async function Agregar() {
+   async function Agregar() {
     setAccionABMC("A");
     setItem({
         IdArticulo: 0,
@@ -99,8 +92,11 @@ async function Buscar() {
         FechaAlta: moment(new Date()).format("YYYY-MM-DD"),
         Activo: true,
       });
-    alert("preparando el Alta...");
+
+    // ya podemos comentar este alert que era solo para el boceto inicial
+    // alert("preparando el Alta...");
   }
+
 
 
   function Imprimir() {
@@ -109,25 +105,41 @@ async function Buscar() {
   }
 
   async function ActivarDesactivar(item) {
-    const resp = window.confirm(
-      "Está seguro que quiere " +
-        (item.Activo ? "desactivar" : "activar") +
-        " el registro?"
-    );
-    if (resp) {
-      alert("Activando/Desactivando...");
+        const resp = window.confirm(
+            "Está seguro que quiere " +
+            (item.Activo ? "desactivar" : "activar") +
+            " el registro?"
+        );
+        if (resp) {
+            await articulosService.ActivarDesactivar(item);
+            await Buscar();
+        }
     }
-  }
+
 
   async function Grabar(item) {
-    alert(
-      "Registro " +
-        (AccionABMC === "A" ? "agregado" : "modificado") +
-        " correctamente."
-    );
+        // agregar o modificar
+        try
+        {
+            await articulosService.Grabar(item);
+        }
+        catch (error)
+        {
+            alert(error?.response?.data?.message ?? error.toString())
+            return;
+        }
+        await Buscar();
+        Volver();
 
-    Volver();
-  }
+        setTimeout(() => {
+            alert(
+            "Registro " +
+                (AccionABMC === "A" ? "agregado" : "modificado") +
+                " correctamente."
+            );
+        }, 0);
+    }
+
 
   // Volver/Cancelar desde Agregar/Modificar/Consultar
   function Volver() {

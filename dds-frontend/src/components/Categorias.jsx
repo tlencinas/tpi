@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { categoriasMockService } from '../services/categorias-mock.service';
+import categoriasService from '../services/categorias.service';
 function Categorias() {
   const tituloPagina = 'Categorias';
   const [categorias, setCategorias] = useState(null);
@@ -8,7 +8,7 @@ function Categorias() {
     BuscarCategorias();
   }, []);
   async function BuscarCategorias() {
-    let data = await categoriasMockService.Buscar();
+    let data = await categoriasService.Buscar();
     setCategorias(data);
   };
   return (
