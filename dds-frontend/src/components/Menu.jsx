@@ -21,16 +21,21 @@ function Menu() {
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
-          <li className="nav-item">
-            <NavLink className="nav-link" to="/inicio">
-              Inicio
-            </NavLink>
-          </li>
-          <li className="nav-item">
-            <NavLink className="nav-link" to="/categorias">
-              Categorias
-            </NavLink>
-          </li>
+            <li className="nav-item">
+                <NavLink className="nav-link" to="/inicio">
+                    Inicio
+                </NavLink>
+            </li>
+            <li className="nav-item">
+                <NavLink className="nav-link" to="/categorias">
+                Categorias
+                </NavLink>
+            </li>
+            <li className="nav-item">	
+                <NavLink className="nav-link" to="/articulos">
+                    Articulos
+                </NavLink>
+            </li>
         </ul>
       </div>
     </nav>
