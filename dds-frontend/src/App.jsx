@@ -1,9 +1,13 @@
+import './App.css';
+import Categorias from "./components/Categorias";
 import Inicio from "./components/Inicio";
 
 function App() {
   return (
      <>
-      <Inicio/>
+      <div className="divBody">
+        <Categorias />
+      </div>
     </>
   );
 }
